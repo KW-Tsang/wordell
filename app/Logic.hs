@@ -12,15 +12,6 @@ lpToString:: [LetterPlace] -> String
 lpToString [] = ""
 lpToString (l:ls) = (lpToChar l):(lpToString ls)
 
--- see if words' letters match
-checkGreen:: String -> String -> [LetterPlace]
-checkGreen _ "" = []
-checkGreen "" _ = []
-checkGreen (a:as) (g:gs)
-    | a == g = G : (checkGreen as gs)
-    | otherwise = N : (checkGreen as gs)
-
-
 -- remove an element from list
 removeFrom:: Eq a => a -> [a] -> [a]
 removeFrom x [] = []
@@ -28,10 +19,17 @@ removeFrom x (a:as)
     | x == a = as
     | otherwise = a : (removeFrom x as)
 
+-- full checker
+checkGuess':: String -> String -> String -> [LetterPlace]
+checkGuess' "" _ _ = []
+checkGuess' _ _ "" = []
+checkGuess' (a:as) ans (g:gs)
+    | a == g = G : nxt
+    | elem g ans = Y : nxt
+    | otherwise = N : (checkGuess' as ans gs)
+    where
+        nxt = (checkGuess' as (removeFrom g ans) gs)
 
--- see if letters are in words
-checkYellow:: String -> String -> [LetterPlace]
-checkYellow _ "" = []
-checkYellow ans (g:gs)
-    | elem g ans = Y : (checkYellow (removeFrom g ans) gs)
-    | otherwise = N : (checkYellow ans gs)
+
+checkGuess:: String -> String -> [LetterPlace]
+checkGuess ans g = checkGuess' ans ans g
