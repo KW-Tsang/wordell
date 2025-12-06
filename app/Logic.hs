@@ -9,15 +9,14 @@ lpToChar Y = 'Y'
 lpToChar G = 'G'
 
 lpToString:: [LetterPlace] -> String
-lpToString [] = ""
-lpToString (l:ls) = (lpToChar l):(lpToString ls)
+lpToString = foldr ((:) . lpToChar) ""
 
 -- remove an element from list
 removeFrom:: Eq a => a -> [a] -> [a]
-removeFrom x [] = []
+removeFrom _ [] = []
 removeFrom x (a:as)
     | x == a = as
-    | otherwise = a : (removeFrom x as)
+    | otherwise = a : removeFrom x as
 
 -- full checker
 checkGuess':: String -> String -> String -> [LetterPlace]
@@ -25,11 +24,11 @@ checkGuess' "" _ _ = []
 checkGuess' _ _ "" = []
 checkGuess' (a:as) ans (g:gs)
     | a == g = G : nxt
-    | elem g ans = Y : nxt
-    | otherwise = N : (checkGuess' as ans gs)
+    | g `elem` ans = Y : nxt
+    | otherwise = N : checkGuess' as ans gs
     where
-        nxt = (checkGuess' as (removeFrom g ans) gs)
+        nxt = checkGuess' as (removeFrom g ans) gs
 
 
 checkGuess:: String -> String -> [LetterPlace]
-checkGuess ans g = checkGuess' ans ans g
+checkGuess ans = checkGuess' ans ans
