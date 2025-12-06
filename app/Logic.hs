@@ -32,3 +32,7 @@ checkGuess' (a:as) ans (g:gs)
 
 checkGuess:: String -> String -> [LetterPlace]
 checkGuess ans = checkGuess' ans ans
+
+isCorrect:: LetterPlace -> Bool
+isCorrect G = True
+isCorrect _ = False
